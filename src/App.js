@@ -11,7 +11,8 @@ export default class App extends React.PureComponent {
     this.state = {
       level: 'entry_level',
       radius: '25',
-      query: ''
+      query: '',
+      results: [{}]
     };
   }
 
@@ -42,7 +43,19 @@ export default class App extends React.PureComponent {
               Let's find some jobs, bruh
             </p>
             <div>
-              
+              <form>
+                <input value={this.state.query}/>
+                <input value={this.state.level}/>
+                <input value={this.state.radius}/>
+                <button onClick={()=>{this.makeServerCall()}}>
+                  Gimme the data already
+                </button>
+              </form>
+              {this.state.results.map((result)=>(
+                  <div>
+                    {result}
+                  </div>
+              ))}
             </div>
           </header>
         </div>
