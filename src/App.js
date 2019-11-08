@@ -1,64 +1,114 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import indeed from 'indeed-scraper'
-
+const indeed = require('indeed-scraper');
 
 export default class App extends React.PureComponent {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.state = {
-      level: 'entry_level',
-      radius: '25',
-      query: '',
-      results: [{}]
-    };
-  }
+        this.state = {
+            level: '',
+            radius: '25',
+            query: '',
+            results: [{}]
+        };
+    }
 
-  makeServerCall() {
-    let queryOptions = {
-      host: 'www.indeed.com',
-      query: this.state.query,
-      city: 'San Diego, CA',
-      radius: this.state.radius,
-      level: this.state.level,
-      jobType: 'fulltime',
-      maxAge: '7',
-      sort: 'date',
-      limit: 100
-    };
+    makeServerCall() {
+        let queryOptions = {
+            host: 'www.indeed.com',
+            query: this.state.query,
+            city: 'San Diego, CA',
+            radius: this.state.radius,
+            level: this.state.level,
+            jobType: 'fulltime',
+            maxAge: '7',
+            sort: 'date',
+            limit: 100
+        };
 
-    indeed.query(queryOptions).then(res => {
-      console.log(res); // An array of Job objects
-    });
-  }
+        indeed.query(queryOptions).then(res => {
+            this.setState({
+                results: res,
+                diabled: false
+            })
+        });
+    }
 
-  render() {
-    return(
-        <div className="App">
-          <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>
-              Let's find some jobs, bruh
-            </p>
+    renderResults() {
+        return (
             <div>
-              <form>
-                <input value={this.state.query}/>
-                <input value={this.state.level}/>
-                <input value={this.state.radius}/>
-                <button onClick={()=>{this.makeServerCall()}}>
-                  Gimme the data already
-                </button>
-              </form>
-              {this.state.results.map((result)=>(
-                  <div>
-                    {result}
-                  </div>
-              ))}
+            {this.state.results.forEach((res) => (
+                <div>
+                    {res}
+                </div>
+            ))}
             </div>
-          </header>
-        </div>
-    )
-  }
+        )
+    }
+
+    render() {
+        console.log(this.state)
+        return (
+            <div className="App">
+                <header className="App-header">
+                    <img src={logo} className="App-logo" alt="logo"/>
+                    <p>
+                        Let's find some jobs, bruh
+                    </p>
+                    <div>
+                        <form style={{width: '40vw', textAlign: 'center'}}>
+                            <div style={{
+                                width: '40vw',
+                                justifyContent: 'space-between',
+                                display: 'flex',
+                            }}>
+                                <label>Query</label>
+                                <input name="query" value={this.state.query} onChange={(e) => {
+                                    this.setState({query: e.target.value})
+                                }}/>
+                            </div>
+                            <br/>
+                            <div style={{
+                                width: '40vw',
+                                justifyContent: 'space-between',
+                                display: 'flex',
+                            }}>
+                                <label>Level</label>
+                                <select name="level" value={this.state.level} onChange={(e) => {
+                                    this.setState({level: e.target.value})
+                                }}>
+                                    <option></option>
+                                    <option>entry_level</option>
+                                    <option>mid_level</option>
+                                    <option>senior_level</option>
+                                </select>
+                            </div>
+                            <br/>
+                            <div style={{
+                                width: '40vw',
+                                justifyContent: 'space-between',
+                                display: 'flex',
+                            }}>
+                                <label>Radius</label>
+                                <input name="radius" value={this.state.radius} onChange={(e) => {
+                                    this.setState({radius: e.target.value})
+                                }}/>
+                            </div>
+                            <br/>
+                            <button disabled={this.state.disabled} onClick={() => {
+                                this.setState({
+                                    diabled: true
+                                }, () => this.makeServerCall())
+                            }}>
+                                Gimme the data already
+                            </button>
+                        </form>
+                        {this.renderResults()}
+                    </div>
+                </header>
+            </div>
+        )
+    }
 }
