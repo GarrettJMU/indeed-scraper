@@ -91,7 +91,7 @@ export default class App extends React.PureComponent {
 
                     </div>
                     <div style={{width: '100%'}} >
-                            <pre id="results" style={{fontSize: 16, textAlign: 'left', maxWidth: '100%' }}>
+                            <pre id="results" style={{fontSize: 12, textAlign: 'left', maxWidth: '100%' }}>
                                 {this.state.results && JSON.stringify(this.state.results, undefined, 4)}
                             </pre>
                     </div>
