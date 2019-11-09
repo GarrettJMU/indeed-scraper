@@ -23,6 +23,7 @@ export default class App extends React.PureComponent {
                 level: this.state.level
             }
         }).then((res) => {
+            console.log(res)
             this.setState({
                 results: res,
                 diabled: false
@@ -77,8 +78,9 @@ export default class App extends React.PureComponent {
                                 }}/>
                             </div>
                             <br/>
-                            <button disabled={this.state.disabled} onClick={() => {
+                            <button disabled={this.state.disabled} onClick={(e) => {
                                 console.log("foo")
+                                e.preventDefault()
                                 this.setState({
                                     diabled: true
                                 }, () => this.makeServerCall())
