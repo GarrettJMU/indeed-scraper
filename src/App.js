@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-const indeed = require('indeed-scraper');
+import axios from 'axios'
 
 export default class App extends React.PureComponent {
     constructor(props) {
@@ -11,45 +11,25 @@ export default class App extends React.PureComponent {
             level: '',
             radius: '25',
             query: '',
-            results: [{}]
+            results: null
         };
     }
 
     makeServerCall() {
-        let queryOptions = {
-            host: 'www.indeed.com',
-            query: this.state.query,
-            city: 'San Diego, CA',
-            radius: this.state.radius,
-            level: this.state.level,
-            jobType: 'fulltime',
-            maxAge: '7',
-            sort: 'date',
-            limit: 100
-        };
-
-        indeed.query(queryOptions).then(res => {
+        axios.get('https://indeed-scraper-1.herokuapp.com/the-goods',{
+            params: {
+                query: this.state.query,
+                radius: this.state.radius,
+                level: this.state.level
+            }
+        }).then((res) => {
             this.setState({
                 results: res,
                 diabled: false
             })
-        });
+        })
     }
-
-    renderResults() {
-        return (
-            <div>
-            {this.state.results.forEach((res) => (
-                <div>
-                    {res}
-                </div>
-            ))}
-            </div>
-        )
-    }
-
     render() {
-        console.log(this.state)
         return (
             <div className="App">
                 <header className="App-header">
@@ -98,6 +78,7 @@ export default class App extends React.PureComponent {
                             </div>
                             <br/>
                             <button disabled={this.state.disabled} onClick={() => {
+                                console.log("foo")
                                 this.setState({
                                     diabled: true
                                 }, () => this.makeServerCall())
@@ -105,7 +86,7 @@ export default class App extends React.PureComponent {
                                 Gimme the data already
                             </button>
                         </form>
-                        {this.renderResults()}
+                        {this.state.results}
                     </div>
                 </header>
             </div>
