@@ -2,6 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios'
+import ReactMarkdown from 'react-markdown'
 
 export default class App extends React.PureComponent {
     constructor(props) {
@@ -23,13 +24,43 @@ export default class App extends React.PureComponent {
                 level: this.state.level
             }
         }).then((res) => {
-            console.log(res)
+            console.log(res.data)
             this.setState({
-                results: res,
+                results: res.data,
                 diabled: false
             })
         })
     }
+
+    output(inp) {
+        document.body.appendChild(document.createElement('pre')).innerHTML = inp;
+    }
+
+    syntaxHighlight(json) {
+        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'key';
+                } else {
+                    cls = 'string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'boolean';
+            } else if (/null/.test(match)) {
+                cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+
+    // var obj = {a:1, 'b':'foo', c:[false,'false',null, 'null', {d:{e:1.3e5,f:'1.3e5'}}]};
+
+    // output(syntaxHighlight(str));
+
+
+
     render() {
         return (
             <div className="App">
@@ -88,7 +119,9 @@ export default class App extends React.PureComponent {
                                 Gimme the data already
                             </button>
                         </form>
-                        {this.state.results}
+                        <div style={{width: '100%'}}>
+                            {this.output(JSON.stringify(this.state.results, undefined, 4))}
+                        </div>
                     </div>
                 </header>
             </div>
